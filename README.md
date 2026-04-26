@@ -73,6 +73,20 @@ Sık kullanılan komutlar:
 
 ---
 
+## 🌐 Landing Page (Domain)
+
+Repo içinde modern tanıtım/dokümantasyon sitesi hazır:
+
+- [website/index.html](website/index.html)
+- [website/style.css](website/style.css)
+- [website/app.js](website/app.js)
+
+Cloudflare Pages + subdomain kurulumu:
+
+- [CLOUDFLARE_PAGES_SETUP.md](CLOUDFLARE_PAGES_SETUP.md)
+
+---
+
 ## 🤖 Team Mode
 
 `/team` modunda kullanıcı sadece hedefi yazar.
