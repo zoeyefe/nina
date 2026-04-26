@@ -3,148 +3,275 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>NINA · Terminal AI Coding Agent</title>
-    <meta name="description" content="NINA: terminalde planlayan, uygulayan ve otomatik toparlayan profesyonel AI coding agent." />
+    <title>NINA | Terminalde çalışan AI coding agent</title>
+    <meta
+      name="description"
+      content="NINA, terminalde çalışan çoklu provider destekli AI coding agent. Team mode, görev planlama, aksiyon motoru ve güvenli kimlik yönetimiyle geliştirildi."
+    />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="./style.css" />
   </head>
   <body>
-    <div class="bg-glow bg-glow-1"></div>
-    <div class="bg-glow bg-glow-2"></div>
+    <div class="noise" aria-hidden="true"></div>
+    <div class="orb orb-a" aria-hidden="true"></div>
+    <div class="orb orb-b" aria-hidden="true"></div>
 
-    <header class="container header">
-      <div class="brand">NINA</div>
-      <nav class="nav">
-        <a href="#about">Nedir?</a>
-        <a href="#features">Özellikler</a>
-        <a href="#team">Team Mode</a>
-        <a href="#install">Başlangıç</a>
-      </nav>
+    <header class="site-header">
+      <div class="container nav-shell">
+        <a class="brand" href="#top" aria-label="NINA ana sayfa">
+          <span class="brand-mark">N</span>
+          <span class="brand-copy">
+            <strong>NINA</strong>
+            <small>Terminal AI Coding Agent</small>
+          </span>
+        </a>
+
+        <nav class="site-nav" aria-label="Ana menü">
+          <a href="#why">Neden</a>
+          <a href="#capabilities">Yetenekler</a>
+          <a href="#workflow">Akış</a>
+          <a href="#install">Kurulum</a>
+        </nav>
+
+        <a class="nav-cta" href="#install">Hemen Kur</a>
+      </div>
     </header>
 
-    <main>
-      <section class="container hero">
-        <p class="badge">Terminal AI Agent · Multi-Provider · Auto-Fix · Team Mode</p>
-        <h1>Kod yazdırmaktan fazlası: <span>teslim eden</span> terminal agent</h1>
-        <p class="hero-text">
-          NINA sadece cevap üretmez. Plan çıkarır, dosyaları düzenler, komutları çalıştırır,
-          hatayı algılar ve mümkünse otomatik düzeltir.
-        </p>
+    <main id="top">
+      <section class="hero">
+        <div class="container hero-grid">
+          <div class="hero-copy" data-reveal>
+            <p class="eyebrow">OPEN SOURCE · MULTI PROVIDER · TEAM MODE</p>
+            <h1>Terminalde çalışan agent gibi değil, küçük bir yazılım ekibi gibi ilerler.</h1>
+            <p class="hero-text">
+              NINA; hedefi alır, planlar, rollere böler, komut ve dosya aksiyonlarını kontrollü şekilde uygular.
+              Tek bir CLI deneyiminde provider esnekliği, ajan koordinasyonu ve güvenli yürütme sunar.
+            </p>
 
-        <div class="cta-row">
-          <a class="btn btn-primary" href="#install">Hemen Başla</a>
-          <a class="btn btn-ghost" href="#team">Team Mode'u Gör</a>
-        </div>
+            <div class="hero-actions">
+              <a class="button button-primary" href="#install">Kurulumu Gör</a>
+              <a class="button button-secondary" href="#capabilities">Özellikleri İncele</a>
+            </div>
 
-        <div class="terminal">
-          <div class="terminal-head">
-            <span></span><span></span><span></span>
-            <b>one-command start</b>
+            <ul class="trust-list" aria-label="Öne çıkan bilgiler">
+              <li>Node.js 18+</li>
+              <li>OpenAI, Anthropic, Ollama ve daha fazlası</li>
+              <li>Planlama, team monitor, action executor</li>
+            </ul>
           </div>
-          <pre id="quickInstall">git clone YOUR_REPO_URL && cd nina && npm install && npm link && nina</pre>
-          <button class="copy" data-copy-target="quickInstall">Kopyala</button>
-        </div>
-      </section>
 
-      <section id="about" class="container section">
-        <h2>NINA ne işe yarar?</h2>
-        <div class="about-grid">
-          <article class="about-card">
-            <h3>Planlar</h3>
-            <p>Görevi alt adımlara böler, öncelik sırasına koyar ve hedefe göre aksiyon üretir.</p>
-          </article>
-          <article class="about-card">
-            <h3>Uygular</h3>
-            <p>`WRITE_FILE`, `RUN_CMD`, `DELETE_FILE` bloklarıyla doğrudan iş yapar.</p>
-          </article>
-          <article class="about-card">
-            <h3>Toparlar</h3>
-            <p>Komut veya dosya hatalarında alternatif yol dener ve akışı stabil tutar.</p>
-          </article>
-        </div>
-      </section>
+          <div class="hero-panel" data-reveal>
+            <div class="terminal-window">
+              <div class="terminal-top">
+                <span></span>
+                <span></span>
+                <span></span>
+                <b>nina session</b>
+              </div>
+              <pre id="heroCommand"><span class="prompt">$</span> npm install
+<span class="prompt">$</span> npm link
+<span class="prompt">$</span> nina
 
-      <section id="features" class="container section">
-        <h2>Profesyonel özellik seti</h2>
-        <div class="grid">
-          <article class="card">
-            <h3>Çoklu Provider</h3>
-            <p>Ollama, OpenAI, Anthropic, Gemini, Groq, Mistral, Cohere, OpenRouter.</p>
-          </article>
-          <article class="card">
-            <h3>Akıllı Komut Uyumu</h3>
-            <p>Windows/Unix komut farklılıklarını yönetir, terminal kırılmalarını azaltır.</p>
-          </article>
-          <article class="card">
-            <h3>Aksiyon Motoru</h3>
-            <p>Dosya ve komut aksiyonlarını diff + onay akışıyla güvenli uygular.</p>
-          </article>
-          <article class="card">
-            <h3>Otomatik Toparlama</h3>
-            <p>Hatalı komutlarda alternatif yöntem dener, güvenli şekilde tekrarlar.</p>
-          </article>
-        </div>
-      </section>
+<span class="accent">/auth web</span>
+<span class="accent">/use openai gpt-4o</span>
+<span class="accent">/team çok ajanlı bir admin paneli tasarla ve kur</span></pre>
+              <button class="copy-button" data-copy-target="heroCommand">Komutu Kopyala</button>
+            </div>
 
-      <section id="team" class="container section">
-        <h2>Team Mode: tek prompt, ekip çıktısı</h2>
-        <p class="muted">
-          `/team` modunda kullanıcı sadece hedefi yazar. NINA rolleri otomatik seçer,
-          paralel ajan akışı kurar, canlı monitörde süreçleri gösterir ve tek bir birleşik çıktı üretir.
-        </p>
-        <div class="terminal">
-          <div class="terminal-head">
-            <span></span><span></span><span></span>
-            <b>team-session</b>
+            <div class="signal-card">
+              <p>Canlı değer önerisi</p>
+              <strong>Plan + Worker + Lead zinciriyle tek prompt’tan uygulanabilir çıktı</strong>
+            </div>
           </div>
-          <pre id="teamDemo">/team bana basit bir kullanıcı yönetim paneli yap
-Roles: Product, UI, Backend, QA
-• Product running... ✓
-• UI running... ✓
-• Backend running... ✓
-• QA running... ✓
-Team Lead: plan + uygulanabilir aksiyonlar hazır</pre>
-          <button class="copy" data-copy-target="teamDemo">Kopyala</button>
         </div>
       </section>
 
-      <section id="install" class="container section">
-        <h2>Hızlı başlangıç</h2>
-        <p class="muted">Node.js 18+ gerekir. Kendi repo URL’in ile tek komutta başlatabilirsin.</p>
+      <section id="why" class="section">
+        <div class="container">
+          <div class="section-heading" data-reveal>
+            <p class="eyebrow">NEDEN NINA</p>
+            <h2>Sıradan bir chat arayüzü değil, eylem odaklı bir geliştirme katmanı.</h2>
+            <p>
+              Repo içindeki <code>core</code>, <code>auth</code>, <code>providers</code>, <code>plugins</code> ve <code>ui</code> parçaları birlikte çalışarak tek bir
+              terminal oturumunu planlama, yürütme ve gözlemleme ortamına dönüştürüyor.
+            </p>
+          </div>
 
-        <div class="tabs">
-          <button class="tab active" data-tab="cross">Önerilen</button>
-          <button class="tab" data-tab="windows">Windows</button>
-          <button class="tab" data-tab="linux">Linux/macOS</button>
-        </div>
-
-        <div class="tab-panel active" data-panel="cross">
-          <pre id="cmdCross">git clone YOUR_REPO_URL && cd nina && npm install && npm link && nina</pre>
-          <button class="copy" data-copy-target="cmdCross">Kopyala</button>
-        </div>
-
-        <div class="tab-panel" data-panel="windows">
-          <pre id="cmdWin">git clone YOUR_REPO_URL; cd nina; npm install; npm link; nina</pre>
-          <button class="copy" data-copy-target="cmdWin">Kopyala</button>
-        </div>
-
-        <div class="tab-panel" data-panel="linux">
-          <pre id="cmdNix">git clone YOUR_REPO_URL && cd nina && npm install && npm link && nina</pre>
-          <button class="copy" data-copy-target="cmdNix">Kopyala</button>
+          <div class="feature-grid">
+            <article class="feature-card" data-reveal>
+              <span>01</span>
+              <h3>Provider bağımsız mimari</h3>
+              <p>OpenAI, Anthropic, Gemini, Groq, Cohere, Mistral, OpenRouter ve Ollama için tek akışta kullanım.</p>
+            </article>
+            <article class="feature-card" data-reveal>
+              <span>02</span>
+              <h3>Aksiyon tabanlı yürütme</h3>
+              <p><code>WRITE_FILE</code>, <code>RUN_CMD</code>, <code>DELETE_FILE</code> gibi işlemleri kontrollü ve uygulanabilir hale getirir.</p>
+            </article>
+            <article class="feature-card" data-reveal>
+              <span>03</span>
+              <h3>Takım modu</h3>
+              <p>Planner, worker ve lead akışıyla tek kullanıcı isteğini birden fazla role dağıtır.</p>
+            </article>
+            <article class="feature-card" data-reveal>
+              <span>04</span>
+              <h3>Kurulum sihirbazı ve auth</h3>
+              <p>Kimlik bilgilerini kullanıcı dizininde saklar, provider seçimini terminal içinden yönetir.</p>
+            </article>
+          </div>
         </div>
       </section>
 
-      <section class="container section final-cta">
-        <h2>Terminalde daha hızlı üretmek için tasarlandı</h2>
-        <p class="muted">NINA ile fikirden çalışan çıktıya daha kısa sürede geç.</p>
-        <a class="btn btn-primary" href="#install">Kurulumu Kopyala</a>
+      <section id="capabilities" class="section section-contrast">
+        <div class="container capabilities-layout">
+          <div class="section-heading compact" data-reveal>
+            <p class="eyebrow">YETENEKLER</p>
+            <h2>Projede gerçekten var olan katmanlar üzerine kuruldu.</h2>
+          </div>
+
+          <div class="capability-list" data-reveal>
+            <article>
+              <h3>Team monitor</h3>
+              <p>Ajan durumlarını, akışlarını ve kısa çıktıları terminal içinde canlı olarak izler.</p>
+            </article>
+            <article>
+              <h3>Planner</h3>
+              <p>Hedefi küçük, uygulanabilir adımlara böler ve gerektiğinde explain/write/cmd akışına çevirir.</p>
+            </article>
+            <article>
+              <h3>Browser plugin</h3>
+              <p>Chrome DevTools Protocol ile sayfa açma, click, eval ve screenshot yetenekleri sağlar.</p>
+            </article>
+            <article>
+              <h3>Setup wizard</h3>
+              <p>Provider ve model seçimini menülü bir terminal deneyimiyle ilk kullanıma hazırlar.</p>
+            </article>
+          </div>
+
+          <div class="architecture-card" data-reveal>
+            <div class="architecture-row">
+              <b>CLI</b>
+              <span>nina.js</span>
+            </div>
+            <div class="architecture-row">
+              <b>Execution Core</b>
+              <span>planner · executor · agents · shell</span>
+            </div>
+            <div class="architecture-row">
+              <b>Providers</b>
+              <span>openai · anthropic · ollama · gemini · groq</span>
+            </div>
+            <div class="architecture-row">
+              <b>Extensions</b>
+              <span>browser · debug · daemon · system</span>
+            </div>
+            <div class="architecture-row">
+              <b>Security</b>
+              <span>credentials in ~/.nina · env template · CODEOWNERS</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="workflow" class="section">
+        <div class="container">
+          <div class="section-heading" data-reveal>
+            <p class="eyebrow">AKIŞ</p>
+            <h2>Bir komuttan ekip benzeri yürütmeye giden sade ama güçlü bir zincir.</h2>
+          </div>
+
+          <div class="workflow-grid">
+            <article class="workflow-step" data-reveal>
+              <strong>1</strong>
+              <h3>Hedefi ver</h3>
+              <p>Kullanıcı doğal dilde ne yapılacağını yazar.</p>
+            </article>
+            <article class="workflow-step" data-reveal>
+              <strong>2</strong>
+              <h3>Planı çıkar</h3>
+              <p>Planner JSON üretir, roller ve milestone yapısı belirlenir.</p>
+            </article>
+            <article class="workflow-step" data-reveal>
+              <strong>3</strong>
+              <h3>Rolleri çalıştır</h3>
+              <p>Worker ajanlar paralel veya kontrollü sırayla kendi sorumluluklarına odaklanır.</p>
+            </article>
+            <article class="workflow-step" data-reveal>
+              <strong>4</strong>
+              <h3>Sonucu uygula</h3>
+              <p>Lead çıktıyı sentezler; gerekirse komut ve dosya aksiyonları önerilir ya da yürütülür.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="install" class="section section-install">
+        <div class="container install-layout">
+          <div class="section-heading compact" data-reveal>
+            <p class="eyebrow">KURULUM</p>
+            <h2>Hızlı başlangıç birkaç komut sürüyor.</h2>
+            <p>Statik site içinde doğrudan repo odaklı bir onboarding akışı sundum.</p>
+          </div>
+
+          <div class="install-card" data-reveal>
+            <div class="tabs" role="tablist" aria-label="Kurulum sekmeleri">
+              <button class="tab is-active" data-tab="standard" role="tab" aria-selected="true">Standart</button>
+              <button class="tab" data-tab="global" role="tab" aria-selected="false">Global CLI</button>
+              <button class="tab" data-tab="commands" role="tab" aria-selected="false">İlk Komutlar</button>
+            </div>
+
+            <div class="tab-panel is-active" data-panel="standard">
+              <pre id="installStandard">git clone YOUR_REPO_URL
+cd nina
+npm install
+npm start</pre>
+              <button class="copy-button" data-copy-target="installStandard">Kopyala</button>
+            </div>
+
+            <div class="tab-panel" data-panel="global">
+              <pre id="installGlobal">git clone YOUR_REPO_URL
+cd nina
+npm install
+npm link
+nina</pre>
+              <button class="copy-button" data-copy-target="installGlobal">Kopyala</button>
+            </div>
+
+            <div class="tab-panel" data-panel="commands">
+              <pre id="installCommands">/help
+/auth web
+/use ollama llama3.2
+/tasks basit bir kullanıcı yönetim paneli yap
+/team çok ajanlı bir admin dashboard kur</pre>
+              <button class="copy-button" data-copy-target="installCommands">Kopyala</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section final-call">
+        <div class="container final-card" data-reveal>
+          <p class="eyebrow">AÇIK KAYNAK VE OPERASYON</p>
+          <h2>Landing page artık repo anlatımına hizmet ediyor, yalnızca süslü bir kapak değil.</h2>
+          <p>
+            Sayfa; ürün konumlandırması, teknik mimari, kurulum akışı ve güven sinyallerini tek bir bütün halinde
+            veriyor. Cloudflare Pages gibi statik dağıtım senaryolarına da doğrudan uygun.
+          </p>
+          <a class="button button-primary" href="#top">Başa Dön</a>
+        </div>
       </section>
     </main>
 
-    <footer class="container footer">
-      <p>NINA · Open-source terminal AI coding agent</p>
+    <footer class="site-footer">
+      <div class="container footer-shell">
+        <p>NINA · Open-source terminal AI coding agent</p>
+        <p>Built for fast execution, controlled actions and multi-agent workflows.</p>
+      </div>
     </footer>
 
     <script src="./app.js"></script>
