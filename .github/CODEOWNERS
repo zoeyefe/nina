@@ -1,0 +1,6 @@
+# Require review on critical runtime and security surfaces
+/core/* @your-github-username
+/auth/* @your-github-username
+/providers/* @your-github-username
+/nina.js @your-github-username
+/package.json @your-github-username
