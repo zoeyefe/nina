@@ -10,6 +10,8 @@
 
 * { box-sizing: border-box; }
 
+html { scroll-behavior: smooth; }
+
 body {
   margin: 0;
   background: radial-gradient(circle at 20% 0%, #0b1226 0%, var(--bg) 42%);
@@ -59,12 +61,20 @@ body {
   padding: 0.45rem 0.85rem;
   color: var(--muted);
   font-size: 0.86rem;
+  backdrop-filter: blur(8px);
 }
 
 h1 {
   margin: 1rem 0;
   font-size: clamp(2rem, 5vw, 3.6rem);
   line-height: 1.05;
+}
+
+h1 span {
+  background: linear-gradient(135deg, var(--primary), #60a5fa 65%, #a78bfa);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 .hero-text {
@@ -92,9 +102,27 @@ h1 {
   color: var(--text);
 }
 
+.btn:hover { transform: translateY(-1px); }
+
 .section { padding: 2.3rem 0; }
 .section h2 { margin-top: 0; font-size: 1.65rem; }
 .muted { color: var(--muted); }
+
+.about-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.about-card {
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1rem;
+  background: linear-gradient(180deg, rgba(96, 165, 250, 0.08), rgba(15, 23, 42, 0.9));
+}
+
+.about-card h3 { margin-top: .2rem; margin-bottom: .45rem; }
+.about-card p { margin: 0; color: var(--muted); }
 
 .grid {
   display: grid;
@@ -107,7 +135,9 @@ h1 {
   border: 1px solid var(--border);
   border-radius: 16px;
   padding: 1rem;
+  transition: border-color .2s ease, transform .2s ease;
 }
+.card:hover { border-color: rgba(34, 211, 238, .45); transform: translateY(-2px); }
 .card h3 { margin: .3rem 0 .5rem; }
 .card p { margin: 0; color: var(--muted); }
 
@@ -182,12 +212,16 @@ pre {
 }
 .copy:hover { color: var(--text); border-color: #475569; }
 
-.steps {
-  color: var(--muted);
-  line-height: 1.7;
-  padding-left: 1.15rem;
-}
 code { color: #a5f3fc; }
+
+.final-cta {
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 1.2rem;
+  background: linear-gradient(180deg, rgba(34, 211, 238, 0.08), rgba(15, 23, 42, 0.88));
+}
+
+.final-cta .btn { margin-top: .5rem; display: inline-block; }
 
 .footer {
   border-top: 1px solid rgba(148,163,184,.2);
@@ -198,4 +232,5 @@ code { color: #a5f3fc; }
 
 @media (max-width: 700px) {
   .nav { display: none; }
+  .cta-row { flex-wrap: wrap; }
 }

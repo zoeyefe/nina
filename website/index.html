@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>NINA · Terminal AI Coding Agent</title>
-    <meta name="description" content="NINA: çoklu model destekli terminal AI coding agent. Tek komut kurulum, team mode ve hızlı başlangıç." />
+    <meta name="description" content="NINA: terminalde planlayan, uygulayan ve otomatik toparlayan profesyonel AI coding agent." />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
@@ -17,50 +17,69 @@
     <header class="container header">
       <div class="brand">NINA</div>
       <nav class="nav">
+        <a href="#about">Nedir?</a>
         <a href="#features">Özellikler</a>
-        <a href="#install">Kurulum</a>
-        <a href="#deploy">Cloudflare</a>
+        <a href="#team">Team Mode</a>
+        <a href="#install">Başlangıç</a>
       </nav>
     </header>
 
     <main>
       <section class="container hero">
-        <p class="badge">Terminal AI Agent · Multi-Provider · Team Mode</p>
-        <h1>nina.efeservili.dev için modern dokümantasyon sayfası</h1>
+        <p class="badge">Terminal AI Agent · Multi-Provider · Auto-Fix · Team Mode</p>
+        <h1>Kod yazdırmaktan fazlası: <span>teslim eden</span> terminal agent</h1>
         <p class="hero-text">
-          NINA ile terminalde kod yaz, çalıştır, planla ve çoklu ajanlarla ekip gibi ilerle.
-          Aşağıdaki komutlarla birkaç dakikada ayağa kaldır.
+          NINA sadece cevap üretmez. Plan çıkarır, dosyaları düzenler, komutları çalıştırır,
+          hatayı algılar ve mümkünse otomatik düzeltir.
         </p>
 
         <div class="cta-row">
-          <a class="btn btn-primary" href="#install">Tek Komut Kurulum</a>
-          <a class="btn btn-ghost" href="#deploy">Cloudflare Subdomain</a>
+          <a class="btn btn-primary" href="#install">Hemen Başla</a>
+          <a class="btn btn-ghost" href="#team">Team Mode'u Gör</a>
         </div>
 
         <div class="terminal">
           <div class="terminal-head">
             <span></span><span></span><span></span>
-            <b>quick-start</b>
+            <b>one-command start</b>
           </div>
           <pre id="quickInstall">git clone YOUR_REPO_URL && cd nina && npm install && npm link && nina</pre>
           <button class="copy" data-copy-target="quickInstall">Kopyala</button>
         </div>
       </section>
 
+      <section id="about" class="container section">
+        <h2>NINA ne işe yarar?</h2>
+        <div class="about-grid">
+          <article class="about-card">
+            <h3>Planlar</h3>
+            <p>Görevi alt adımlara böler, öncelik sırasına koyar ve hedefe göre aksiyon üretir.</p>
+          </article>
+          <article class="about-card">
+            <h3>Uygular</h3>
+            <p>`WRITE_FILE`, `RUN_CMD`, `DELETE_FILE` bloklarıyla doğrudan iş yapar.</p>
+          </article>
+          <article class="about-card">
+            <h3>Toparlar</h3>
+            <p>Komut veya dosya hatalarında alternatif yol dener ve akışı stabil tutar.</p>
+          </article>
+        </div>
+      </section>
+
       <section id="features" class="container section">
-        <h2>Öne Çıkanlar</h2>
+        <h2>Profesyonel özellik seti</h2>
         <div class="grid">
           <article class="card">
             <h3>Çoklu Provider</h3>
             <p>Ollama, OpenAI, Anthropic, Gemini, Groq, Mistral, Cohere, OpenRouter.</p>
           </article>
           <article class="card">
-            <h3>Team Mode</h3>
-            <p>Hedefi yaz, roller otomatik seçilsin, ajanlar birlikte planlasın ve üretsin.</p>
+            <h3>Akıllı Komut Uyumu</h3>
+            <p>Windows/Unix komut farklılıklarını yönetir, terminal kırılmalarını azaltır.</p>
           </article>
           <article class="card">
             <h3>Aksiyon Motoru</h3>
-            <p>`WRITE_FILE`, `RUN_CMD`, `DELETE_FILE` akışını kontrollü ve onaylı uygular.</p>
+            <p>Dosya ve komut aksiyonlarını diff + onay akışıyla güvenli uygular.</p>
           </article>
           <article class="card">
             <h3>Otomatik Toparlama</h3>
@@ -69,12 +88,34 @@
         </div>
       </section>
 
+      <section id="team" class="container section">
+        <h2>Team Mode: tek prompt, ekip çıktısı</h2>
+        <p class="muted">
+          `/team` modunda kullanıcı sadece hedefi yazar. NINA rolleri otomatik seçer,
+          paralel ajan akışı kurar, canlı monitörde süreçleri gösterir ve tek bir birleşik çıktı üretir.
+        </p>
+        <div class="terminal">
+          <div class="terminal-head">
+            <span></span><span></span><span></span>
+            <b>team-session</b>
+          </div>
+          <pre id="teamDemo">/team bana basit bir kullanıcı yönetim paneli yap
+Roles: Product, UI, Backend, QA
+• Product running... ✓
+• UI running... ✓
+• Backend running... ✓
+• QA running... ✓
+Team Lead: plan + uygulanabilir aksiyonlar hazır</pre>
+          <button class="copy" data-copy-target="teamDemo">Kopyala</button>
+        </div>
+      </section>
+
       <section id="install" class="container section">
-        <h2>Kurulum</h2>
-        <p class="muted">Node.js 18+ gerekir. Komutları kendi repo URL’inle kullan.</p>
+        <h2>Hızlı başlangıç</h2>
+        <p class="muted">Node.js 18+ gerekir. Kendi repo URL’in ile tek komutta başlatabilirsin.</p>
 
         <div class="tabs">
-          <button class="tab active" data-tab="cross">Tüm Platformlar</button>
+          <button class="tab active" data-tab="cross">Önerilen</button>
           <button class="tab" data-tab="windows">Windows</button>
           <button class="tab" data-tab="linux">Linux/macOS</button>
         </div>
@@ -95,33 +136,15 @@
         </div>
       </section>
 
-      <section id="deploy" class="container section">
-        <h2>Cloudflare + Subdomain (nina.efeservili.dev)</h2>
-        <ol class="steps">
-          <li>Cloudflare Dashboard → <b>Workers & Pages</b> → <b>Create application</b> → <b>Pages</b>.</li>
-          <li>Bu GitHub reposunu bağla, build komutu boş bırak, output directory: <code>website</code>.</li>
-          <li>Deploy bitince Pages projesinde <b>Custom domains</b> → <b>Set up a custom domain</b>.</li>
-          <li><code>nina.efeservili.dev</code> ekle ve doğrula.</li>
-          <li>DNS otomatik yönetilmiyorsa Cloudflare DNS’te CNAME kaydını Pages hedefiyle eşle.</li>
-        </ol>
-
-        <div class="terminal">
-          <div class="terminal-head">
-            <span></span><span></span><span></span>
-            <b>deploy-checklist</b>
-          </div>
-          <pre id="deployChecklist">[ ] GitHub repo connected to Cloudflare Pages
-[ ] Build command empty
-[ ] Output dir = website
-[ ] Custom domain = nina.efeservili.dev
-[ ] HTTPS active</pre>
-          <button class="copy" data-copy-target="deployChecklist">Kopyala</button>
-        </div>
+      <section class="container section final-cta">
+        <h2>Terminalde daha hızlı üretmek için tasarlandı</h2>
+        <p class="muted">NINA ile fikirden çalışan çıktıya daha kısa sürede geç.</p>
+        <a class="btn btn-primary" href="#install">Kurulumu Kopyala</a>
       </section>
     </main>
 
     <footer class="container footer">
-      <p>Made for NINA · Open-source terminal AI coding agent</p>
+      <p>NINA · Open-source terminal AI coding agent</p>
     </footer>
 
     <script src="./app.js"></script>
