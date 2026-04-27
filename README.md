@@ -40,14 +40,7 @@ NINA, terminalden çalışan bir AI coding agent’tır. Kullanıcıdan gelen he
 Gereksinim: **Node.js >= 18**
 
 ```bash
-npm install
-npm start
-```
-
-Global komut olarak kullanmak için:
-
-```bash
-npm link
+npm install -g @zoeyefe/nina
 nina
 ```
 
