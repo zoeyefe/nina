@@ -1,5 +1,5 @@
 {
-  "name": "nina",
+  "name": "@zoeyefe/nina",
   "version": "1.0.0",
   "description": "Multi-provider terminal AI coding agent",
   "main": "nina.js",
