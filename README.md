@@ -9,167 +9,167 @@
 ╚═╝  ╚═══╝╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝
 ```
 
-**Terminal AI Coding Agent — 7/24 Otomatik Vibe Coder**
+**Terminal AI Coding Agent — 24/7 Automatic Vibe Coder**
 
 [![npm](https://img.shields.io/npm/v/@zoeyefe/nina?color=ff4a6e&label=npm&logo=npm&logoColor=white)](https://www.npmjs.com/package/@zoeyefe/nina)
 [![Node.js](https://img.shields.io/badge/Node.js-18%2B-339933?logo=node.js&logoColor=white)](https://nodejs.org)
 [![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Linux%20%7C%20macOS-111827)](https://github.com/zoeyefe/nina)
 [![License](https://img.shields.io/badge/License-MIT-2563eb)](LICENSE)
-[![Status](https://img.shields.io/badge/Status-Aktif%20Geliştirme-16a34a)](https://github.com/zoeyefe/nina)
+[![Status](https://img.shields.io/badge/Status-Active%20Development-16a34a)](https://github.com/zoeyefe/nina)
 [![Website](https://img.shields.io/badge/Website-nina.efeservili.dev-ff4a6e)](https://nina.efeservili.dev)
 
 </div>
 
 ---
 
-## Ne Yapar?
+## What Does It Do?
 
-NINA, **terminalden çalışan** bir yapay zeka coding agent'ıdır. Sana bir hedef söylersin — NINA planlar, dosyaları yazar, komutları çalıştırır, hataları onarır. Sen sadece izlersin.
+NINA is an AI coding agent that **runs in the terminal**. You give it a goal — NINA plans, writes files, runs commands, and fixes errors. You just watch.
 
 ```bash
 $ nina
-> /team basit bir kullanıcı yönetim paneli yap
+> /team build a simple user management panel
 
-  ◆ Planner   → Hedef analiz edildi, 4 adım oluşturuldu
-  ◆ Architect → Dosya yapısı tasarlandı
-  ◆ Coder     → src/App.jsx yazıldı
-  ◆ Tester    → npm run test çalıştırıldı ✓
+  ◆ Planner   → Goal analyzed, 4 steps created
+  ◆ Architect → File structure designed
+  ◆ Coder     → src/App.jsx written
+  ◆ Tester    → npm run test executed ✓
 ```
 
 ---
 
-## Özellikler
+## Features
 
 | | |
 |---|---|
-| 🤖 **8 Provider Desteği** | Ollama, OpenAI, Anthropic, Gemini, Groq, Mistral, Cohere, OpenRouter |
-| ⚡ **Aksiyon Motoru** | `WRITE_FILE` / `RUN_CMD` / `DELETE_FILE` — doğrudan dosya sistemi üzerinde çalışır |
-| 🧠 **Team Mode** | Çoklu ajan rol dağılımı — planner, coder, reviewer aynı anda |
-| 📋 **Task Planner** | `/tasks` ile hedefe adım adım yol haritası |
-| 🔄 **Otomatik Hata Onarımı** | Komut/aksiyon hatalarında kendi kendini toparlama döngüsü |
-| 📺 **Canlı Monitor** | Team mode'da ajanların durumu tek ekranda canlı izlenir |
-| 🔐 **Güvenli Auth** | API key'ler `~/.nina/credentials.json` içinde, repoya girmez |
-| 🖥️ **Cross-Platform** | Windows + Unix komut uyumluluk katmanı |
+| 🤖 **8 Provider Support** | Ollama, OpenAI, Anthropic, Gemini, Groq, Mistral, Cohere, OpenRouter |
+| ⚡ **Action Engine** | `WRITE_FILE` / `RUN_CMD` / `DELETE_FILE` — works directly on the file system |
+| 🧠 **Team Mode** | Multi-agent role distribution — planner, coder, reviewer at the same time |
+| 📋 **Task Planner** | Step-by-step roadmap to the goal with `/tasks` |
+| 🔄 **Automatic Error Recovery** | Self-recovery loop on command/action failures |
+| 📺 **Live Monitor** | In team mode, agent states are tracked live on a single screen |
+| 🔐 **Secure Auth** | API keys are stored in `~/.nina/credentials.json`, never committed |
+| 🖥️ **Cross-Platform** | Windows + Unix command compatibility layer |
 
 ---
 
-## Kurulum
+## Installation
 
 ```bash
 npm install -g @zoeyefe/nina
 nina
 ```
 
-> **Gereksinim:** Node.js 18 veya üzeri
+> **Requirement:** Node.js 18 or higher
 
 ---
 
-## Hızlı Başlangıç
+## Quick Start
 
 ```bash
-# 1. Bir provider ekle
+# 1. Add a provider
 /auth web
 
-# 2. Model seç
+# 2. Select a model
 /use ollama qwen3:8b
-# veya
+# or
 /use openai gpt-4o
-# veya
+# or
 /use anthropic claude-sonnet-4-5
 
-# 3. Tek ajanlı mod
-/tasks bir REST API yaz, Express + JWT auth olsun
+# 3. Single-agent mode
+/tasks write a REST API with Express + JWT auth
 
-# 4. Team mode — NINA rolleri kendisi atar
-/team e-ticaret ürün sayfası yap, React + Tailwind
+# 4. Team mode — NINA assigns roles automatically
+/team build an e-commerce product page, React + Tailwind
 ```
 
 ---
 
-## Komut Referansı
+## Command Reference
 
 ```
-/auth add|web|oauth|remove|list   → Provider kimlik yönetimi
-/use <provider> [model]           → Aktif modeli değiştir
-/team <hedef>                     → Çoklu ajan modu başlat
-/tasks <hedef>                    → Planlı tek ajan modu
-/run <komut>                      → Shell komutu çalıştır
-/debug                            → Debug bilgilerini göster
-/daemon                           → Arka plan modu
-/system                           → Sistem ayarları
-/help                             → Tüm komutları listele
+/auth add|web|oauth|remove|list   → Provider credential management
+/use <provider> [model]           → Change active model
+/team <goal>                      → Start multi-agent mode
+/tasks <goal>                     → Planned single-agent mode
+/run <command>                    → Execute shell command
+/debug                            → Show debug info
+/daemon                           → Background mode
+/system                           → System settings
+/help                             → List all commands
 ```
 
 ---
 
-## Team Mode Nasıl Çalışır?
+## How Team Mode Works?
 
-`/team` yazdığında NINA şunları yapar:
+When you type `/team`, NINA does the following:
 
 ```
-Kullanıcı hedefi girer
+User enters goal
         ↓
-  Hedef analiz edilir
+  Goal is analyzed
         ↓
-  Roller otomatik atanır
+  Roles are assigned automatically
   (Planner / Coder / Reviewer / ...)
         ↓
-  Ajanlar paralel çalışır
-  (Terminal monitöründe canlı görünür)
+  Agents run in parallel
+  (Visible live in terminal monitor)
         ↓
-  Aksiyonlar uygulanır
-  (Dosyalar yazılır, komutlar çalışır)
+  Actions are applied
+  (Files are written, commands are run)
         ↓
-  Birleşik sonuç üretilir
+  Unified result is produced
 ```
 
-Kullanıcı sadece hedefi yazar. Geri kalanını NINA halleder.
+The user only writes the goal. NINA handles the rest.
 
 ---
 
-## Proje Yapısı
+## Project Structure
 
 ```
 nina/
-├── nina.js          # Ana CLI döngüsü & giriş noktası
+├── nina.js          # Main CLI loop & entry point
 ├── core/            # Executor, planner, agents, shell adapter, system prompt
-├── providers/       # LLM provider entegrasyonları (8 adet)
-├── auth/            # Credential & auth akışları
-├── ui/              # Terminal banner, input, renk sistemi
-├── plugins/         # Browser, system, debug, daemon yetenekleri
-├── memory/          # Session & memory yönetimi
-└── website/         # nina.efeservili.dev kaynak kodu
+├── providers/       # LLM provider integrations (8 total)
+├── auth/            # Credential & auth flows
+├── ui/              # Terminal banner, input, color system
+├── plugins/         # Browser, system, debug, daemon capabilities
+├── memory/          # Session & memory management
+└── website/         # Source code of nina.efeservili.dev
 ```
 
 ---
 
-## Desteklenen Providerlar
+## Supported Providers
 
 ```
-ollama      → Yerel modeller, sıfır maliyet
+ollama      → Local models, zero cost
 openai      → GPT-4o, o1, o3
 anthropic   → Claude Sonnet, Opus
 gemini      → Gemini 1.5 Pro/Flash
-groq        → Llama 3, Mixtral (çok hızlı)
+groq        → Llama 3, Mixtral (very fast)
 mistral     → Mistral Large/Small
 cohere      → Command R+
-openrouter  → 200+ model tek API
+openrouter  → 200+ models, one API
 ```
 
 ---
 
-## Güvenlik
+## Security
 
-- API key'ler sadece `~/.nina/credentials.json` içinde tutulur — repoya girmez
-- `.env.example` şablonunu kullan, gerçek değerleri asla commit etme
-- `main` branch'i korumalıdır — direct push kapalı
-- PR review zorunlu, kritik dosyalar CODEOWNERS ile denetleniyor
+- API keys are stored only in `~/.nina/credentials.json` — never committed to the repository
+- Use the `.env.example` template, never commit real values
+- The `main` branch is protected — direct push is disabled
+- PR review is required, critical files are controlled with CODEOWNERS
 
-Detaylar için → [SECURITY.md](SECURITY.md)
+For details → [SECURITY.md](SECURITY.md)
 
 ---
 
-## Katkıda Bulunma
+## Contributing
 
 ```bash
 git clone https://github.com/zoeyefe/nina.git
@@ -178,7 +178,7 @@ npm install
 node nina.js
 ```
 
-PR açmadan önce ilgili dosyayı CODEOWNERS'da kontrol et.
+Before opening a PR, check the relevant file in CODEOWNERS.
 
 ---
 
@@ -186,8 +186,8 @@ PR açmadan önce ilgili dosyayı CODEOWNERS'da kontrol et.
 
 **[🌐 Website](https://nina.efeservili.dev)** · **[🐛 Issues](https://github.com/zoeyefe/nina/issues)** · **[📋 Changelog](https://github.com/zoeyefe/nina/commits/main)**
 
-MIT Lisansı © 2025 [zoeyefe](https://github.com/zoeyefe)
+MIT License © 2025 [zoeyefe](https://github.com/zoeyefe)
 
-*NINA hâlâ gelişiyor — her commit'te biraz daha zekileşiyor.*
+*NINA is still evolving — getting smarter with every commit.*
 
 </div>
