@@ -15,6 +15,16 @@ async function nextTask(queue) {
   return queueMutex.runExclusive(() => queue.shift());
 }
 
+const blackboardMutex = new Mutex();
+export const blackboard = { findings: [], status: {} };
+
+export async function appendFinding(entry) {
+  await blackboardMutex.runExclusive(() => {
+    blackboard.findings.push({ ...entry, ts: Date.now() });
+    blackboard.status[entry.role] = entry.action;
+  });
+}
+
 function stripAnsi(s = '') {
   return String(s).replace(/\x1b\[[0-9;]*m/g, '');
 }
@@ -115,6 +125,14 @@ function createTeamMonitor(goal) {
     }
 
     lines.push(`${c.dim}${'─'.repeat(termW)}${c.reset}`);
+
+    if (blackboard.findings.length) {
+      lines.push(`${paint.bold('BLACKBOARD')} ${paint.dim('· last 5 findings')}`);
+      for (const f of blackboard.findings.slice(-5)) {
+        lines.push(trunc(`[${f.role}] ${f.action} -> ${f.result}`, termW));
+      }
+      lines.push(`${c.dim}${'─'.repeat(termW)}${c.reset}`);
+    }
 
     if (linesPrinted > 0) process.stdout.write(`\x1b[${linesPrinted}A`);
     process.stdout.write('\r\x1b[J' + lines.join('\n') + '\n');
@@ -340,10 +358,14 @@ Kurallar:
         }
       );
       monitor.workerDone(workerRole.role, out);
-      workerOutputs.push({ role: workerRole.role, output: String(out || '').trim() || '(no output)' });
+      const outcomeSummary = String(out || '').trim() || '(no output)';
+      workerOutputs.push({ role: workerRole.role, output: outcomeSummary });
+      await appendFinding({ role: workerRole.role, action: workerRole.focus || workerRole.role, result: outcomeSummary });
     } catch (e) {
       monitor.workerFailed(workerRole.role, e.message);
-      workerOutputs.push({ role: workerRole.role, output: `SKIPPED: ${e.message}` });
+      const outcomeSummary = `SKIPPED: ${e.message}`;
+      workerOutputs.push({ role: workerRole.role, output: outcomeSummary });
+      await appendFinding({ role: workerRole.role, action: workerRole.focus || workerRole.role, result: outcomeSummary });
     }
   }
 
