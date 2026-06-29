@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import os from 'os';
+import crypto from 'crypto';
 
 const NINA_DIR = path.join(os.homedir(), '.nina');
 const CREDS_FILE = path.join(NINA_DIR, 'credentials.json');
@@ -10,10 +11,43 @@ function ensureDir() {
   if (!fs.existsSync(NINA_DIR)) fs.mkdirSync(NINA_DIR, { recursive: true });
 }
 
+function deriveKey() {
+  return crypto.scryptSync(os.hostname() + os.userInfo().username, 'nina-salt', 32);
+}
+
+function encrypt(text) {
+  const iv = crypto.randomBytes(12);
+  const cipher = crypto.createCipheriv('aes-256-gcm', deriveKey(), iv);
+  const data = Buffer.concat([cipher.update(text, 'utf8'), cipher.final()]);
+  return { iv: iv.toString('hex'), tag: cipher.getAuthTag().toString('hex'), data: data.toString('hex') };
+}
+
+function decrypt(obj) {
+  const decipher = crypto.createDecipheriv('aes-256-gcm', deriveKey(), Buffer.from(obj.iv, 'hex'));
+  decipher.setAuthTag(Buffer.from(obj.tag, 'hex'));
+  return Buffer.concat([decipher.update(Buffer.from(obj.data, 'hex')), decipher.final()]).toString('utf8');
+}
+
+function isEncryptedShape(value) {
+  return value && typeof value === 'object' && typeof value.iv === 'string' && typeof value.tag === 'string' && typeof value.data === 'string';
+}
+
 function loadCreds() {
   try {
     const raw = fs.readFileSync(CREDS_FILE, 'utf8');
-    return JSON.parse(raw);
+    const parsed = JSON.parse(raw);
+    let migrated = false;
+    for (const provider of Object.keys(parsed)) {
+      const value = parsed[provider];
+      if (typeof value === 'string') {
+        // Old base64 format — decode and re-encrypt in place.
+        const plaintext = Buffer.from(value, 'base64').toString('utf8');
+        parsed[provider] = encrypt(plaintext);
+        migrated = true;
+      }
+    }
+    if (migrated) saveCreds(parsed);
+    return parsed;
   } catch {
     return {};
   }
@@ -29,7 +63,7 @@ export const config = {
 
   setKey(provider, key) {
     const creds = loadCreds();
-    creds[provider] = Buffer.from(key).toString('base64');
+    creds[provider] = encrypt(key);
     saveCreds(creds);
   },
 
@@ -48,8 +82,8 @@ export const config = {
       return process.env[envMap[provider]];
     }
     const creds = loadCreds();
-    if (creds[provider]) {
-      return Buffer.from(creds[provider], 'base64').toString('utf8');
+    if (creds[provider] && isEncryptedShape(creds[provider])) {
+      return decrypt(creds[provider]);
     }
     return null;
   },
