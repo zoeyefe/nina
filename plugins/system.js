@@ -1,8 +1,17 @@
-import { execSync, exec } from 'child_process';
+import { execFileSync, exec } from 'child_process';
 import { paint } from '../ui/colors.js';
+import { getPowerShellExe } from '../core/shell.js';
 import os from 'os';
 import fs from 'fs';
 import path from 'path';
+
+// Safely embed a value as a PowerShell single-quoted string literal.
+// Single-quoted strings in PowerShell have no escape sequences other than
+// doubling an embedded single quote, so this cannot be used to break out
+// into command execution (no $(), backtick, or `"` expansion applies).
+function psSingleQuote(value) {
+  return `'${String(value).replace(/'/g, "''")}'`;
+}
 
 export const systemPlugin = {
   description: 'PC control: apps, clipboard, screenshot, notifications, processes',
@@ -23,9 +32,9 @@ export const systemPlugin = {
   // Open a file/URL/app
   open(target) {
     try {
-      if (process.platform === 'win32') execSync(`start "" "${target}"`, { stdio: 'ignore' });
-      else if (process.platform === 'darwin') execSync(`open "${target}"`, { stdio: 'ignore' });
-      else execSync(`xdg-open "${target}"`, { stdio: 'ignore' });
+      if (process.platform === 'win32') execFileSync('cmd.exe', ['/c', 'start', '""', target], { stdio: 'ignore' });
+      else if (process.platform === 'darwin') execFileSync('open', [target], { stdio: 'ignore' });
+      else execFileSync('xdg-open', [target], { stdio: 'ignore' });
       return true;
     } catch (e) { console.log(paint.error(e.message)); return false; }
   },
@@ -34,16 +43,22 @@ export const systemPlugin = {
   clipboard: {
     read() {
       try {
-        if (process.platform === 'win32') return execSync('powershell -command "Get-Clipboard"', { encoding: 'utf8' }).trim();
-        if (process.platform === 'darwin') return execSync('pbpaste', { encoding: 'utf8' }).trim();
-        return execSync('xclip -selection clipboard -o', { encoding: 'utf8' }).trim();
+        if (process.platform === 'win32') return execFileSync(getPowerShellExe(), ['-NoProfile', '-Command', 'Get-Clipboard'], { encoding: 'utf8' }).trim();
+        if (process.platform === 'darwin') return execFileSync('pbpaste', [], { encoding: 'utf8' }).trim();
+        return execFileSync('xclip', ['-selection', 'clipboard', '-o'], { encoding: 'utf8' }).trim();
       } catch { return ''; }
     },
     write(text) {
       try {
-        if (process.platform === 'win32') execSync(`powershell -command "Set-Clipboard -Value '${text.replace(/'/g, "''")}'"`, { stdio: 'ignore' });
-        else if (process.platform === 'darwin') execSync(`echo '${text}' | pbcopy`, { stdio: 'ignore' });
-        else execSync(`echo '${text}' | xclip -selection clipboard`, { stdio: 'ignore' });
+        if (process.platform === 'win32') {
+          const script = `Set-Clipboard -Value ${psSingleQuote(text)}`;
+          const encoded = Buffer.from(script, 'utf16le').toString('base64');
+          execFileSync(getPowerShellExe(), ['-NoProfile', '-EncodedCommand', encoded], { stdio: 'ignore' });
+        } else if (process.platform === 'darwin') {
+          execFileSync('pbcopy', [], { input: text, stdio: ['pipe', 'ignore', 'ignore'] });
+        } else {
+          execFileSync('xclip', ['-selection', 'clipboard'], { input: text, stdio: ['pipe', 'ignore', 'ignore'] });
+        }
         return true;
       } catch { return false; }
     },
@@ -53,11 +68,13 @@ export const systemPlugin = {
   screenshot(outPath = path.join(os.tmpdir(), `nina-ss-${Date.now()}.png`)) {
     try {
       if (process.platform === 'win32') {
-        execSync(`powershell -command "Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.Screen]::PrimaryScreen | ForEach-Object { $bmp = New-Object System.Drawing.Bitmap($_.Bounds.Width, $_.Bounds.Height); $g = [System.Drawing.Graphics]::FromImage($bmp); $g.CopyFromScreen($_.Bounds.Location, [System.Drawing.Point]::Empty, $_.Bounds.Size); $bmp.Save('${outPath}') }"`, { stdio: 'ignore' });
+        const script = `Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.Screen]::PrimaryScreen | ForEach-Object { $bmp = New-Object System.Drawing.Bitmap($_.Bounds.Width, $_.Bounds.Height); $g = [System.Drawing.Graphics]::FromImage($bmp); $g.CopyFromScreen($_.Bounds.Location, [System.Drawing.Point]::Empty, $_.Bounds.Size); $bmp.Save(${psSingleQuote(outPath)}) }`;
+        const encoded = Buffer.from(script, 'utf16le').toString('base64');
+        execFileSync(getPowerShellExe(), ['-NoProfile', '-EncodedCommand', encoded], { stdio: 'ignore' });
       } else if (process.platform === 'darwin') {
-        execSync(`screencapture -x "${outPath}"`, { stdio: 'ignore' });
+        execFileSync('screencapture', ['-x', outPath], { stdio: 'ignore' });
       } else {
-        execSync(`scrot "${outPath}"`, { stdio: 'ignore' });
+        execFileSync('scrot', [outPath], { stdio: 'ignore' });
       }
       console.log(paint.success(`Screenshot: ${outPath}`));
       return outPath;
@@ -68,11 +85,13 @@ export const systemPlugin = {
   notify(title, body) {
     try {
       if (process.platform === 'win32') {
-        execSync(`powershell -command "[Windows.UI.Notifications.ToastNotificationManager, Windows.UI.Notifications, ContentType=WindowsRuntime] | Out-Null; $xml = [Windows.UI.Notifications.ToastNotificationManager]::GetTemplateContent([Windows.UI.Notifications.ToastTemplateType]::ToastText02); $xml.GetElementsByTagName('text')[0].AppendChild($xml.CreateTextNode('${title}')); $xml.GetElementsByTagName('text')[1].AppendChild($xml.CreateTextNode('${body}')); [Windows.UI.Notifications.ToastNotificationManager]::CreateToastNotifier('Nina').Show((New-Object Windows.UI.Notifications.ToastNotification $xml))"`, { stdio: 'ignore' });
+        const script = `[Windows.UI.Notifications.ToastNotificationManager, Windows.UI.Notifications, ContentType=WindowsRuntime] | Out-Null; $xml = [Windows.UI.Notifications.ToastNotificationManager]::GetTemplateContent([Windows.UI.Notifications.ToastTemplateType]::ToastText02); $xml.GetElementsByTagName('text')[0].AppendChild($xml.CreateTextNode(${psSingleQuote(title)})); $xml.GetElementsByTagName('text')[1].AppendChild($xml.CreateTextNode(${psSingleQuote(body)})); [Windows.UI.Notifications.ToastNotificationManager]::CreateToastNotifier('Nina').Show((New-Object Windows.UI.Notifications.ToastNotification $xml))`;
+        const encoded = Buffer.from(script, 'utf16le').toString('base64');
+        execFileSync(getPowerShellExe(), ['-NoProfile', '-EncodedCommand', encoded], { stdio: 'ignore' });
       } else if (process.platform === 'darwin') {
-        execSync(`osascript -e 'display notification "${body}" with title "${title}"'`, { stdio: 'ignore' });
+        execFileSync('osascript', ['-e', `display notification ${JSON.stringify(body)} with title ${JSON.stringify(title)}`], { stdio: 'ignore' });
       } else {
-        execSync(`notify-send "${title}" "${body}"`, { stdio: 'ignore' });
+        execFileSync('notify-send', [title, body], { stdio: 'ignore' });
       }
     } catch {}
   },
@@ -81,22 +100,24 @@ export const systemPlugin = {
   processes(filter = '') {
     try {
       if (process.platform === 'win32') {
-        const out = execSync('tasklist /fo csv /nh', { encoding: 'utf8' });
+        const out = execFileSync('tasklist', ['/fo', 'csv', '/nh'], { encoding: 'utf8' });
         return out.split('\n')
           .filter(l => l && (!filter || l.toLowerCase().includes(filter.toLowerCase())))
           .slice(0, 20)
           .map(l => { const p = l.split('","'); return { name: p[0]?.replace(/"/g,''), pid: p[1], mem: p[4]?.replace(/"/g,'') }; });
       }
-      const out = execSync(`ps aux${filter ? ` | grep ${filter}` : ''}`, { encoding: 'utf8' });
-      return out.split('\n').slice(1, 20);
+      const out = execFileSync('ps', ['aux'], { encoding: 'utf8' });
+      const lines = out.split('\n').slice(1);
+      const filtered = filter ? lines.filter(l => l.toLowerCase().includes(filter.toLowerCase())) : lines;
+      return filtered.slice(0, 19);
     } catch { return []; }
   },
 
   // Kill process
   kill(pid) {
     try {
-      if (process.platform === 'win32') execSync(`taskkill /PID ${pid} /F`, { stdio: 'pipe' });
-      else execSync(`kill -9 ${pid}`, { stdio: 'pipe' });
+      if (process.platform === 'win32') execFileSync('taskkill', ['/PID', String(pid), '/F'], { stdio: 'pipe' });
+      else execFileSync('kill', ['-9', String(pid)], { stdio: 'pipe' });
       return true;
     } catch { return false; }
   },

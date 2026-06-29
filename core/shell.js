@@ -37,10 +37,10 @@ function normalizeWindowsCmdCommand(command) {
   return c;
 }
 
-function getPowerShellExe() {
+export function getPowerShellExe() {
   const root = process.env.SystemRoot || process.env.windir || 'C:\\Windows';
   const psExe = path.join(root, 'System32', 'WindowsPowerShell', 'v1.0', 'powershell.exe');
-  return fs.existsSync(psExe) ? psExe : null;
+  return fs.existsSync(psExe) ? psExe : 'powershell.exe';
 }
 
 export function buildExecCommand(command) {
