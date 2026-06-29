@@ -3,10 +3,17 @@ import { config } from '../auth/config.js';
 import { callProvider } from '../providers/index.js';
 import { buildSystemPrompt } from './system-prompt.js';
 import { getMemoryContext } from '../memory/index.js';
+import { Mutex } from 'async-mutex';
 
 const PLAN_TIMEOUT_MS = 45000;
 const WORKER_TIMEOUT_MS = 60000;
 const LEAD_TIMEOUT_MS = 120000;
+
+const queueMutex = new Mutex();
+
+async function nextTask(queue) {
+  return queueMutex.runExclusive(() => queue.shift());
+}
 
 function stripAnsi(s = '') {
   return String(s).replace(/\x1b\[[0-9;]*m/g, '');
@@ -341,8 +348,8 @@ Kurallar:
   }
 
   const runners = Array.from({ length: Math.min(concurrency, queue.length) }, async () => {
-    while (queue.length) {
-      const workerRole = queue.shift();
+    while (true) {
+      const workerRole = await nextTask(queue);
       if (!workerRole) break;
       await runOne(workerRole);
     }

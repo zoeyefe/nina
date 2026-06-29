@@ -12,5 +12,8 @@
   },
   "engines": {
     "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "async-mutex": "^0.5.0"
   }
 }
