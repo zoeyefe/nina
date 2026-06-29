@@ -201,6 +201,10 @@ async function setActive() {
   const el = document.getElementById('active-status');
   el.textContent = data.ok ? '✓ Active: ' + data.provider + ' / ' + data.model : '✗ ' + data.error;
   el.className = 'status ' + (data.ok ? 'ok' : 'err');
+  if (data.ok) {
+    fetch('/close');
+    setTimeout(() => window.close(), 800);
+  }
 }
 
 function showStatus(provider, msg, ok) {
@@ -217,11 +221,26 @@ const PROVIDER_MODELS = ${JSON.stringify(
 
 function onProviderChange() {
   const pid = document.getElementById('provider-select').value;
-  const models = PROVIDER_MODELS[pid] || [];
   const sel = document.getElementById('model-select');
+  document.getElementById('model-input').value = '';
+  if (pid === 'ollama') {
+    sel.innerHTML = '<option value="">— loading models —</option>';
+    fetch('/test-ollama').then(r => r.json()).then(data => {
+      if (data.ok && data.models && data.models !== '(none)') {
+        const models = data.models.split(',').map(m => m.trim()).filter(Boolean);
+        sel.innerHTML = '<option value="">— select model —</option>' +
+          models.map(m => '<option value="' + m + '">' + m + '</option>').join('');
+      } else {
+        sel.innerHTML = '<option value="">— no models found —</option>';
+      }
+    }).catch(() => {
+      sel.innerHTML = '<option value="">— no models found —</option>';
+    });
+    return;
+  }
+  const models = PROVIDER_MODELS[pid] || [];
   sel.innerHTML = '<option value="">— select model —</option>' +
     models.map(m => '<option value="' + m + '">' + m + '</option>').join('');
-  document.getElementById('model-input').value = '';
 }
 
 function onModelSelectChange() {
