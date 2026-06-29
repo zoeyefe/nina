@@ -1,9 +1,13 @@
 import http from 'http';
+import crypto from 'crypto';
 import { config } from './config.js';
 import { paint } from '../ui/colors.js';
 
 const PORT = 9876;
 const CALLBACK_URL = `http://localhost:${PORT}/callback`;
+
+// Module-level state scoped to the in-flight OAuth attempt, used for CSRF protection.
+let pendingState = null;
 
 // Google OAuth — requires GOOGLE_CLIENT_ID + GOOGLE_CLIENT_SECRET env vars
 export async function googleOAuth() {
@@ -13,12 +17,16 @@ export async function googleOAuth() {
     throw new Error('Set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET env vars first.');
   }
 
+  const state = crypto.randomBytes(16).toString('hex');
+  pendingState = state;
+
   const authUrl = new URL('https://accounts.google.com/o/oauth2/v2/auth');
   authUrl.searchParams.set('client_id', clientId);
   authUrl.searchParams.set('redirect_uri', CALLBACK_URL);
   authUrl.searchParams.set('response_type', 'code');
   authUrl.searchParams.set('scope', 'openid email profile');
   authUrl.searchParams.set('access_type', 'offline');
+  authUrl.searchParams.set('state', state);
 
   console.log(paint.info('\nOpen this URL in your browser:'));
   console.log(paint.dim(authUrl.toString()));
@@ -38,10 +46,14 @@ export async function githubOAuth() {
     throw new Error('Set GITHUB_CLIENT_ID and GITHUB_CLIENT_SECRET env vars first.');
   }
 
+  const state = crypto.randomBytes(16).toString('hex');
+  pendingState = state;
+
   const authUrl = new URL('https://github.com/login/oauth/authorize');
   authUrl.searchParams.set('client_id', clientId);
   authUrl.searchParams.set('redirect_uri', CALLBACK_URL);
   authUrl.searchParams.set('scope', 'read:user user:email');
+  authUrl.searchParams.set('state', state);
 
   console.log(paint.info('\nOpen this URL in your browser:'));
   console.log(paint.dim(authUrl.toString()));
@@ -59,15 +71,31 @@ function waitForCallback() {
       const url = new URL(req.url, `http://localhost:${PORT}`);
       const code = url.searchParams.get('code');
       const error = url.searchParams.get('error');
+      const returnedState = url.searchParams.get('state') || '';
+
+      const expectedState = pendingState || '';
+      const expectedBuf = Buffer.from(expectedState);
+      const returnedBuf = Buffer.from(returnedState);
+      const stateValid =
+        expectedState.length > 0 &&
+        expectedBuf.length === returnedBuf.length &&
+        crypto.timingSafeEqual(expectedBuf, returnedBuf);
 
       res.writeHead(200, { 'Content-Type': 'text/html' });
-      if (code) {
+      if (code && stateValid) {
         res.end('<html><body><h2>Nina: Auth successful! You can close this tab.</h2></body></html>');
         server.close();
+        pendingState = null;
         resolve(code);
+      } else if (code && !stateValid) {
+        res.end('<html><body><h2>Error: invalid OAuth state (possible CSRF attempt)</h2></body></html>');
+        server.close();
+        pendingState = null;
+        reject(new Error('OAuth state mismatch — possible CSRF attempt'));
       } else {
         res.end(`<html><body><h2>Error: ${error}</h2></body></html>`);
         server.close();
+        pendingState = null;
         reject(new Error(error || 'OAuth failed'));
       }
     });
