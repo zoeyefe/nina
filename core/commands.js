@@ -356,10 +356,22 @@ async function cmdBrowser(args, state) {
 function cmdSystem(args, state) {
   const [sub, ...rest] = args.trim().split(/\s+/);
   if (!sub) {
-    const cmds = [['info','System info (RAM, CPU, uptime)'],['open <path>','Open file/URL/app'],['clip','Read clipboard'],['copy <text>','Write clipboard'],['shot [file]','Screenshot'],['notify <msg>','Desktop notification'],['ps [filter]','Process list'],['kill <pid>','Kill process']];
+    const cmds = [['info','System info (RAM, CPU, uptime)'],['open <path>','Open file/URL/app'],['clip','Read clipboard'],['copy <text>','Write clipboard'],['shot [file]','Screenshot'],['notify <msg>','Desktop notification'],['ps [filter]','Process list'],['kill <pid>','Kill process'],['approval <always|risky-only|never>','Set command/delete approval mode']];
     console.log(`\n${paint.bold('/system')} — PC Control\n`);
     cmds.forEach(([c,h]) => console.log(`  ${paint.info('/system ' + c.padEnd(18))} ${paint.dim(h)}`));
     console.log(); return;
+  }
+  if (sub === 'approval') {
+    const mode = rest[0];
+    const valid = ['always', 'risky-only', 'never'];
+    if (!valid.includes(mode)) {
+      console.log(paint.warn(`Usage: /system approval <${valid.join('|')}>`));
+      console.log(paint.dim(`  Current: ${config.get('approvalMode', 'risky-only')}`));
+      return;
+    }
+    config.set('approvalMode', mode);
+    console.log(paint.success(`Approval mode set to: ${mode}`));
+    return;
   }
   if (sub === 'info') {
     const info = systemPlugin.info();

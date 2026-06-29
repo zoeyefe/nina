@@ -4,8 +4,23 @@ import readline from 'readline';
 import { execSync } from 'child_process';
 import { c } from '../ui/colors.js';
 import { buildExecCommand } from './shell.js';
+import { config } from '../auth/config.js';
 
 const W = () => Math.min(process.stdout.columns || 80, 100);
+
+// ── Denylist / approval modes ───────────────────────────────────────────────
+const DENYLIST_PATTERNS = [
+  /\brm\s+-rf\b/i, /\bdel\s+\/s\b/i, /\bformat\b/i, /\bshutdown\b/i,
+  /\bmkfs\b/i, /\b:(){ :|:& };:/, />\s*\/dev\/sd[a-z]/i,
+];
+
+export function isRiskyCommand(cmd) {
+  return DENYLIST_PATTERNS.some((re) => re.test(cmd));
+}
+
+function confirm(question) {
+  return ask(question).then((a) => a !== 'n');
+}
 
 // ── Diff ─────────────────────────────────────────────────────────────────────
 function diff(oldSrc, newSrc) {
@@ -169,8 +184,12 @@ export async function executeActions(actions, cwd, undoStack, autorun = false) {
 
       let ok = autorun;
       if (!ok) {
-        const a = await ask(`  ${c.cyan}Run?${c.reset} ${c.dim}[Y/n]${c.reset} `);
-        ok = a !== 'n';
+        const approvalMode = config.get('approvalMode', 'risky-only');
+        const needsPrompt = approvalMode === 'always'
+          || (approvalMode === 'risky-only' && isRiskyCommand(action.command));
+        ok = needsPrompt
+          ? await confirm(`  ${c.cyan}Run?${c.reset} ${c.dim}[Y/n]${c.reset} `)
+          : true;
       }
       if (ok) {
         try {
@@ -199,8 +218,11 @@ export async function executeActions(actions, cwd, undoStack, autorun = false) {
       }
       let ok = autorun;
       if (!ok) {
-        const a = await ask(`  ${c.cyan}Delete?${c.reset} ${c.dim}[Y/n]${c.reset} `);
-        ok = a !== 'n';
+        const approvalMode = config.get('approvalMode', 'risky-only');
+        const needsPrompt = approvalMode !== 'never'; // delete always prompts unless 'never'
+        ok = needsPrompt
+          ? await confirm(`  ${c.cyan}Delete?${c.reset} ${c.dim}[Y/n]${c.reset} `)
+          : true;
       }
       if (ok) {
         try {
