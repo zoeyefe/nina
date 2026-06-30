@@ -83,7 +83,7 @@ function cmdProviders(state) {
     const hasKey = id === 'ollama' || !!config.getKey(id);
     const active = state.provider === id;
     const status = hasKey ? paint.success('✓') : paint.dim('○');
-    const mark = active ? paint.cyan('❯') : ' ';
+    const mark = active ? `${c.cyan}❯${c.reset}` : ' ';
     console.log(`  ${mark} ${status} ${paint.bold(id.padEnd(12))} ${paint.dim(p.label)}`);
     if (active) console.log(`      ${paint.dim('Model: ' + state.model)}`);
   }
