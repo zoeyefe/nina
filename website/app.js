@@ -68,8 +68,6 @@ const translations = {
       "Windows PowerShell ve Unix komut farkları <code>core/shell.js</code> içinde normalize edilir.",
     installEyebrow: "KURULUM",
     installTitle: "Global kur, provider ekle, hedefi yaz.",
-    installText:
-      "Statik sayfa sadeleşse de onboarding kısmı pratik kalmalı: komutlar kopyalanabilir ve ilk akışı net gösterir.",
     tabInstall: "Kurulum",
     tabWork: "Çalışma",
     installWork: "/tasks src klasörünü incele ve eksik testleri yaz\n/team basit bir CRM dashboard'u kur\n/debug test\n/undo",
@@ -148,8 +146,6 @@ const translations = {
       "Windows PowerShell and Unix command differences are normalized in <code>core/shell.js</code>.",
     installEyebrow: "INSTALL",
     installTitle: "Install globally, add a provider, write the goal.",
-    installText:
-      "The static page stays practical: commands are copyable and the first-run path is clear.",
     tabInstall: "Install",
     tabWork: "Work",
     installWork: "/tasks inspect the src folder and write missing tests\n/team build a simple CRM dashboard\n/debug test\n/undo",
