@@ -1,9 +1,28 @@
 import { execSync } from 'child_process';
+import fs from 'fs';
+import path from 'path';
+import os from 'os';
 import { paint, c } from '../ui/colors.js';
 export { browserPlugin } from './browser.js';
 export { systemPlugin } from './system.js';
 export { debugPlugin } from './debug.js';
 export { daemonPlugin } from './daemon.js';
+
+// ── Third-party user plugin loading ─────────────────────────────────────────
+export async function loadUserPlugins() {
+  const dir = path.join(os.homedir(), '.nina', 'plugins');
+  if (!fs.existsSync(dir)) return [];
+  const loaded = [];
+  for (const file of fs.readdirSync(dir).filter(f => f.endsWith('.js'))) {
+    try {
+      const mod = await import(`file://${path.join(dir, file).replace(/\\/g, '/')}`);
+      if (mod.default?.name) loaded.push(mod.default);
+    } catch (e) {
+      console.error(`Failed to load plugin ${file}: ${e.message}`);
+    }
+  }
+  return loaded;
+}
 
 // ── Web Search ──────────────────────────────────────────────────────────────
 export async function webSearch(query) {

@@ -21,7 +21,7 @@ export function getCommands(state) {
     '/tasks': (args) => cmdTasks(args, state),
     '/team': (args) => cmdTeam(args, state),
     '/multi': (args) => cmdMulti(args, state),
-    '/plugins': () => cmdPlugins(state),
+    '/plugins': (args) => cmdPlugins(args, state),
     '/open': (args) => cmdOpen(args, state),
     '/ls': (args) => cmdLs(args, state),
     '/cd': (args) => cmdCd(args, state),
@@ -58,7 +58,7 @@ ${hr()}
   ${paint.info('/tasks <goal>')}            Plan & execute a goal step by step
   ${paint.info('/team <goal>')}             Multi-agent team mode (roles auto-selected by AI)
   ${paint.info('/multi <prompt>')}          Query all providers in parallel
-  ${paint.info('/plugins')}                 List active plugins
+  ${paint.info('/plugins')}                 List plugins (enable/disable <name>)
   ${paint.info('/open <file>')}             Add file to context
   ${paint.info('/ls [dir]')}                List directory
   ${paint.info('/cd <dir>')}                Change directory
@@ -240,15 +240,33 @@ async function cmdMulti(args, state) {
   console.log();
 }
 
-function cmdPlugins(state) {
+function cmdPlugins(args, state) {
+  const [sub, name] = args.trim().split(/\s+/);
+  const disabled = config.get('disabledPlugins', []);
+
+  if (sub === 'enable' || sub === 'disable') {
+    if (!name) { console.log(paint.warn(`Usage: /plugins ${sub} <name>`)); return; }
+    let next = disabled.filter(n => n !== name);
+    if (sub === 'disable') next.push(name);
+    config.set('disabledPlugins', next);
+    console.log(paint.success(`Plugin "${name}" ${sub}d.`));
+    return;
+  }
+
   console.log(`\n${paint.bold('Plugins:')}\n`);
-  const plugins = state.plugins || {};
-  if (!Object.keys(plugins).length) {
+  const builtins = state.plugins || {};
+  const userPlugins = state.userPlugins || [];
+  if (!Object.keys(builtins).length && !userPlugins.length) {
     console.log(paint.dim('  No plugins active. See plugins/index.js\n'));
     return;
   }
-  for (const [name, p] of Object.entries(plugins)) {
-    console.log(`  ${paint.success('✓')} ${paint.bold(name)}: ${paint.dim(p.description || '')}`);
+  for (const [pname, p] of Object.entries(builtins)) {
+    const status = disabled.includes(pname) ? paint.dim('✗ disabled') : paint.success('✓ enabled');
+    console.log(`  ${status} ${paint.bold(pname)}: ${paint.dim(p.description || '')}`);
+  }
+  for (const p of userPlugins) {
+    const status = disabled.includes(p.name) ? paint.dim('✗ disabled') : paint.success('✓ enabled');
+    console.log(`  ${status} ${paint.bold(p.name)} ${paint.dim('(user plugin)')}`);
   }
   console.log();
 }

@@ -228,13 +228,13 @@ function onProviderChange() {
     fetch('/test-ollama').then(r => r.json()).then(data => {
       if (data.ok && data.models && data.models !== '(none)') {
         const models = data.models.split(',').map(m => m.trim()).filter(Boolean);
-        sel.innerHTML = '<option value="">— select model —</option>' +
-          models.map(m => '<option value="' + m + '">' + m + '</option>').join('');
+        sel.replaceChildren(new Option('— select model —', ''));
+        models.forEach(m => sel.add(new Option(m, m)));
       } else {
-        sel.innerHTML = '<option value="">— no models found —</option>';
+        sel.replaceChildren(new Option('— no models found —', ''));
       }
     }).catch(() => {
-      sel.innerHTML = '<option value="">— no models found —</option>';
+      sel.replaceChildren(new Option('— no models found —', ''));
     });
     return;
   }

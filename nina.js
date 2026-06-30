@@ -13,7 +13,7 @@ import { buildSystemPrompt } from './core/system-prompt.js';
 import { parseActions, stripActions, executeActions, undoLast } from './core/executor.js';
 import { getCommands } from './core/commands.js';
 import { loadMemory, saveSummary, getMemoryContext, buildSessionSummary, saveSession as saveSessionData, loadSession, listSessions } from './memory/index.js';
-import { plugins } from './plugins/index.js';
+import { plugins, loadUserPlugins } from './plugins/index.js';
 
 const state = {
   provider: config.get('provider', 'anthropic'),
@@ -26,6 +26,7 @@ const state = {
   autorun:  false,
   memory:   {},
   plugins,
+  userPlugins: [],   // third-party plugins loaded from ~/.nina/plugins
   btwNotes: [],      // /btw side notes injected into next message
   abortCtrl: null,
   sessionId: createHash('sha1').update(Date.now().toString()).digest('hex').slice(0, 8),
@@ -162,6 +163,10 @@ process.on('SIGINT', async () => {
 });
 
 async function main() {
+  const loadedUserPlugins = await loadUserPlugins();
+  state.userPlugins = loadedUserPlugins;
+  for (const p of loadedUserPlugins) state.plugins[p.name] = p;
+
   if (config.isFirstRun()) await providerSelectScreen();
 
   while (true) {

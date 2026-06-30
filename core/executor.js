@@ -5,6 +5,7 @@ import { execSync } from 'child_process';
 import { c } from '../ui/colors.js';
 import { buildExecCommand } from './shell.js';
 import { config } from '../auth/config.js';
+import { printDiff as printDiffPreview } from './diff.js';
 
 const W = () => Math.min(process.stdout.columns || 80, 100);
 
@@ -12,6 +13,8 @@ const W = () => Math.min(process.stdout.columns || 80, 100);
 const DENYLIST_PATTERNS = [
   /\brm\s+-rf\b/i, /\bdel\s+\/s\b/i, /\bformat\b/i, /\bshutdown\b/i,
   /\bmkfs\b/i, /\b:(){ :|:& };:/, />\s*\/dev\/sd[a-z]/i,
+  /\bdd\b/i, /\bchmod\b/i, /\bchown\b/i,
+  /[;&|`]/, /\$\(/, />\s*\//, // shell metacharacters, substitution, redirect-to-root
 ];
 
 export function isRiskyCommand(cmd) {
@@ -164,6 +167,11 @@ export async function executeActions(actions, cwd, undoStack, autorun = false) {
         const a = await ask(`  ${c.cyan}Apply?${c.reset} ${c.dim}[Y/n/a(ll)]${c.reset} `);
         if (a === 'a') { autorun = true; ok = true; }
         else ok = a !== 'n';
+      } else if (config.get('approvalMode', 'risky-only') === 'always') {
+        // Diff preview required for every WRITE_FILE when approval mode is 'always',
+        // even under autorun (e.g. /team or --yes flows).
+        printDiffPreview(old ?? '', action.content, action.path);
+        ok = await confirm(`  ${c.cyan}Apply?${c.reset} ${c.dim}[Y/n]${c.reset} `);
       }
 
       if (ok) {
@@ -184,7 +192,7 @@ export async function executeActions(actions, cwd, undoStack, autorun = false) {
 
       let ok = autorun;
       if (!ok) {
-        const approvalMode = config.get('approvalMode', 'risky-only');
+        const approvalMode = config.get('approvalMode', 'always');
         const needsPrompt = approvalMode === 'always'
           || (approvalMode === 'risky-only' && isRiskyCommand(action.command));
         ok = needsPrompt
@@ -218,7 +226,7 @@ export async function executeActions(actions, cwd, undoStack, autorun = false) {
       }
       let ok = autorun;
       if (!ok) {
-        const approvalMode = config.get('approvalMode', 'risky-only');
+        const approvalMode = config.get('approvalMode', 'always');
         const needsPrompt = approvalMode !== 'never'; // delete always prompts unless 'never'
         ok = needsPrompt
           ? await confirm(`  ${c.cyan}Delete?${c.reset} ${c.dim}[Y/n]${c.reset} `)
